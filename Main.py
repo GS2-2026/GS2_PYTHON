@@ -1,14 +1,15 @@
 import json
+import os
 
 # ==============================================================================
 # 1. TUPLAS (DADOS CONSTANTES E IMUTÁVEIS)
 # ==============================================================================
 CATEGORIAS_ACOES = (
-    "Reciclagem e Descarte Correto",
-    "Economia de Energia",
-    "Economia de Água",
-    "Mobilidade Sustentável",
-    "Consumo Consciente"
+    "Redução do Consumo de Água",
+    "Identificação de Vazamentos",
+    "Redução do Consumo de Energia",
+    "Eficiência Energética",
+    "Conscientização sobre Consumo"
 )
 
 STATUS_ACOES = (
@@ -39,9 +40,9 @@ lista_acoes = [
     {
         "id": 1,
         "id_usuario": 1,
-        "categoria": "Reciclagem e Descarte",
-        "descricao": "Separação de materiais recicláveis no bairro",
-        "local": "São Paulo - SP",
+        "categoria": "Redução do Consumo de Água",
+        "descricao": "Redução co tempo de banho",
+        "local": "Residência",
         "data": "23/05/2027",
         "pontos": 50,
         "status": "Aprovada"
@@ -49,8 +50,8 @@ lista_acoes = [
     {
         "id": 2,
         "id_usuario": 2,
-        "categoria": "Economia de Água",
-        "descricao": "Campanha de conscientização sobre economia de água",
+        "categoria": "Identificação de Vazamentos",
+        "descricao": "Identificação e comunicação de vazamento",
         "local": "São Paulo - SP",
         "data": "25/05/2027",
         "pontos": 70,
@@ -59,20 +60,18 @@ lista_acoes = [
     {
         "id": 3,
         "id_usuario": 3,
-        "categoria": "Mobilidade Sustentável",
-        "descricao": "Uso de bicicleta para transporte",
-        "local": "São Paulo - SP",
+        "categoria": "Redução do Consumo de Energia",
+        "descricao": "Substituição de lâmpadas por LED",
+        "local": "Residência",
         "data": "30/05/2027",
         "pontos": 45,
-        "status": "Aprovada"
+        "status": "Pendente"
     }
 ]
 
-
 # ==============================================================================
-# 4. EXPORTAÇÃO DE CONSULTAS PARA JSON (REQUISITO SPRINT 4)
+# 4. EXPORTAÇÃO DE CONSULTAS PARA JSON
 # ==============================================================================
-
 
 def exportar_dados_para_json(dados, nome_arquivo="exportacao_ecorank.json"):
     """
@@ -179,7 +178,7 @@ def registrar_acao(acoes, usuarios):
 
         descricao = input("Descreva a ação realizada: ").strip()
         local = input("Informe o local da ação: ").strip()
-        data = input("Informe os pontos a data: (DD/MM/AAAA)").strip()
+        data = input("Informe a data (DD/MM/AAAA): ").strip()
 
         pontos = int(input("Informe os pontos da ação: "))
 
@@ -503,8 +502,8 @@ def relatorio_impacto(acoes):
         elif acao["status"] == "Pendente":
             pendentes = pendentes + 1
 
-        elif acao["status"] == "Pendente":
-            pendentes = pendentes + 1
+        elif acao["status"] == "Sinalizada":
+            sinalizadas = sinalizadas + 1
 
         elif acao["status"] == "Rejeitada":
             rejeitadas = rejeitadas + 1
