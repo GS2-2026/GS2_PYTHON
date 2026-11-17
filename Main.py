@@ -1,9 +1,9 @@
 import json
 import os
 
-# ==============================================================================
-# 1. TUPLAS (DADOS CONSTANTES E IMUTÁVEIS)
-# ==============================================================================
+
+# 1. tuplas
+
 CATEGORIAS_ACOES = (
     "Redução do Consumo de Água",
     "Identificação de Vazamentos",
@@ -27,9 +27,9 @@ NIVEIS_PROGRESSAO = (
     ("Esmeralda", 1000)
 )
 
-# ==============================================================================
-# 2. LISTAS DE DICIONÁRIOS (BASE DE DADOS EM MEMÓRIA)
-# ==============================================================================
+
+# 2. listas de dicionarios
+
 lista_usuarios = [
     {"id": 1, "nome": "Ana Silva", "pontos": 120, "nivel": "Prata"},
     {"id": 2, "nome": "Carlos Souza", "pontos": 350, "nivel": "Ouro"},
@@ -63,7 +63,7 @@ lista_acoes = [
         "id": 3,
         "id_usuario": 3,
         "categoria": "Reutilização de Água",
-        "descrição": "Reutilização de água para limpeza",
+        "descricão": "Reutilização de água para limpeza",
         "local": "São Paulo - SP",
         "data": "30/05/2027",
         "pontos": 45,
@@ -97,9 +97,9 @@ def carregar_dados():
             lista_usuarios = dados["usuarios"]
             lista_acoes = dados["acoes"]
 
-# ==============================================================================
-# 4. EXPORTAÇÃO DE CONSULTAS PARA JSON
-# ==============================================================================
+
+# 4. exportação para json
+
 
 
 def exportar_dados_para_json(dados, nome_arquivo="exportacao_ecorank.json"):
@@ -115,9 +115,8 @@ def exportar_dados_para_json(dados, nome_arquivo="exportacao_ecorank.json"):
     except Exception as e:
         print(f"[ERRO]: Falha ao exportar dados para JSON: {e}")
 
-# ==============================================================================
-# 5. FUNÇÕES AUXILIARES E REGRAS DE NEGÓCIO
-# ==============================================================================
+
+# 5. funções auxiliares e regras de negocio
 
 
 def determinar_nivel(pontos):
@@ -159,9 +158,9 @@ def gerar_novo_id(lista_dados):
 
     return maior_id + 1
 
-# ==============================================================================
-# 6. FUNÇÕES DE ORGANIZAÇÃO E FILTRAGEM
-# ==============================================================================
+
+# 6. funções de organização e filtragem
+
 
 
 def filtrar_acoes_por_status(acoes, status_escolhido):
@@ -184,14 +183,12 @@ def obter_ranking(usuarios):
                 ranking[j] = auxiliar
     return ranking
 
-# ==============================================================================
-# 7. CRUD DE AÇÕES (COM TRY, EXCEPT, ELSE, FINALLY, API E JSON)
-# ==============================================================================
 
+# 7. crud de ações
 
 def registrar_acao(acoes, usuarios):
-    """Cadastra uma nova ação sustentável no EcoRank Citizen."""
-    print("\n--- REGISTRAR NOVA AÇÃO SUSTENTÁVEL ---")
+    """Cadastra uma nova ação de economia de água no EcoRank Citizen."""
+    print("\n--- REGISTRAR NOVA AÇÃO DE ECONOMIA DE ÁGUA ---")
 
     try:
         id_usuario = int(input("Digite o ID do usuário responsável: "))
@@ -214,7 +211,7 @@ def registrar_acao(acoes, usuarios):
             input("Informe os litros de água economizados: "))
 
     except ValueError:
-        print("[ERRO]: Digite números válidos para o ID, categoria e pontos.")
+        print("[ERRO]: Digite números válidos para o ID, categoria, pontos e litros.")
 
     else:
         usuario = buscar_usuario_por_id(id_usuario, usuarios)
@@ -232,6 +229,8 @@ def registrar_acao(acoes, usuarios):
             print("[AVISO]: Informe a data no formato DD/MM/AAAA.")
         elif pontos <= 0:
             print("[AVISO]: A pontuação deve ser um número maior que zero.")
+        elif litros_economizados <= 0:
+            print("AVISO: Os litros economizados devem ser maiores que zero.")
         else:
             categoria_selecionada = CATEGORIAS_ACOES[opcao_cat - 1]
             novo_id = gerar_novo_id(acoes)
@@ -258,16 +257,19 @@ def registrar_acao(acoes, usuarios):
 
 def listar_acoes(acoes):
     """Exibe todas as ações da lista (Read) e oferece exportação JSON."""
-    print("\n--- LISTAGEM DE AÇÕES (READ) ---")
+    print("\n--- LISTAGEM DE AÇÕES DE ECONOMIA DE ÁGUA ---")
     if len(acoes) == 0:
         print("Nenhuma ação cadastrada.")
         return
 
     for acao in acoes:
         print(
-            f"ID: {acao['id']} | Usuário: {acao['id_usuario']} | Status: {acao['status']} | Pontos: {acao['pontos']}")
+            f"ID: {acao['id']} | Usuário: {acao['id_usuario']} | Status: {acao['status']}")
         print(f"Categoria: {acao['categoria']}")
         print(f"Descrição: {acao['descricao']}")
+        print(f"Local: {acao['local']}")
+        print(f"Data: {acao['pontos']}")
+        print(f"Água economizada: {acao.get('litros_economizados', 0)}litros")
         print("-" * 50)
 
     opcao_exp = input(
@@ -313,8 +315,13 @@ def atualizar_status_acao(acoes, usuarios):
                     usuario["nivel"] = determinar_nivel(usuario["pontos"])
                     print(
                         f"-> Pontos creditados: +{acao['pontos']} para o usuário {usuario['nome']}.")
+                    print(
+                        f"-> Água economizada registrada: "
+                        f"{acao.get('litros_economizados', 0)} litros."
+                    )
                     print(f"-> Novo nível do usuário: {usuario['nivel']}.")
 
+            salvar_dados()
             print(
                 f"[SUCESSO]: Status da ação ID {id_acao} alterado para '{novo_status}'.")
     finally:
@@ -323,7 +330,7 @@ def atualizar_status_acao(acoes, usuarios):
 
 def excluir_acao(acoes):
     """Remove uma ação da lista pelo seu ID (Delete)."""
-    print("\n--- EXCLUIR AÇÃO SUSTENTÁVEL (DELETE) ---")
+    print("\n--- EXCLUIR AÇÃO DE ECONOMIA DE ÁGUA ---")
     try:
         id_acao = int(input("Digite o ID da ação que deseja excluir: "))
     except ValueError:
@@ -337,15 +344,15 @@ def excluir_acao(acoes):
                 f"Confirma a exclusão da ação ID {id_acao}? (S/N): ").strip().upper()
             if confirma == "S":
                 acoes.remove(acao)
+                salvar_dados()
                 print(f"[SUCESSO]: Ação ID {id_acao} excluída com sucesso.")
             else:
                 print("[AVISO]: Exclusão cancelada.")
     finally:
         print("[FINALIZAÇÃO]: Processo de exclusão finalizado.")
 
-# ==============================================================================
-# 8. GESTÃO DE USUÁRIOS
-# ==============================================================================
+# 8. gestão de usuarios.
+
 
 
 def cadastrar_usuario(usuarios):
@@ -384,9 +391,9 @@ def listar_usuarios(usuarios):
     if opcao_exp == "S":
         exportar_dados_para_json(usuarios, "consultas_usuarios.json")
 
-# ==============================================================================
-# 9. MENUS E SUBMENUS COM WHILE E IF/ELIF/ELSE
-# ==============================================================================
+
+# 9. menus e submenus
+
 
 
 def submenu_acoes():
