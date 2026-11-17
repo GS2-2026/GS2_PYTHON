@@ -526,12 +526,14 @@ def relatorio_impacto(acoes):
     sinalizadas = 0
 
     pontos_distribuídos = 0
+    total_litros_economizados = 0
 
     for acao in acoes:
 
         if acao["status"] == "Aprovada":
             aprovadas = aprovadas + 1
-            pontos_distribuidos = pontos_distribuídos + acao["pontos"]
+            pontos_distribuídos = pontos_distribuídos + acao["pontos"]
+            total_litros_economizados += acao["litros_economizados"]
 
         elif acao["status"] == "Pendente":
             pendentes = pendentes + 1
@@ -549,6 +551,7 @@ def relatorio_impacto(acoes):
     print(f"Ações sinalizadas: {sinalizadas}")
 
     print(f"\nTotal de pontos distribuidos: {pontos_distribuídos}")
+    print(f"Total de água economizada: {total_litros_economizados:.2f} litros")
 
     print("=" * 45)
 
