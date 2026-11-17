@@ -7,9 +7,9 @@ import os
 CATEGORIAS_ACOES = (
     "Redução do Consumo de Água",
     "Identificação de Vazamentos",
-    "Redução do Consumo de Energia",
-    "Eficiência Energética",
-    "Conscientização sobre Consumo"
+    "Reutilização de Água",
+    "Captação de Água da Chuva",
+    "Conscientização sobre uso da Água"
 )
 
 STATUS_ACOES = (
@@ -40,8 +40,8 @@ lista_acoes = [
     {
         "id": 1,
         "id_usuario": 1,
-        "categoria": "Redução do Consumo de Água",
-        "descricao": "Redução co tempo de banho",
+        "categoria": "Economia no Banho",
+        "descricao": "Redução do tempo de banho",
         "local": "Residência",
         "data": "23/05/2027",
         "pontos": 50,
@@ -56,18 +56,37 @@ lista_acoes = [
         "data": "25/05/2027",
         "pontos": 70,
         "status": "Pendente"
-    },
+    }
     {
         "id": 3,
         "id_usuario": 3,
-        "categoria": "Redução do Consumo de Energia",
-        "descricao": "Substituição de lâmpadas por LED",
-        "local": "Residência",
-        "data": "30/05/2027",
-        "pontos": 45,
-        "status": "Pendente"
+        "categoria": "Reutilização de Água",
+        "descrição": "Reutiliza"
     }
 ]
+
+# função para salvar dados
+def salvar_dados():
+    dados = {
+        "usuarios": lista_usuarios,
+        "acoes": lista_acoes
+    }
+
+    with open("dados_ecorank.json", "w", encoding="utf-8") as arquivo:
+        json.dump(dados, arquivo, ensure_ascii=False, indent=4)
+
+# função para carregar os dados
+def carregar_dados():
+    global lista_usuarios, lista_acoes
+
+    if os.path.exists("dados_ecorank.json"):
+        with open("dados_ecorank.json", "r", encoding="utf-8") as arquivo:
+            dados = json.load(arquivo)
+
+            lista_usuarios = dados["usuarios"]
+            lista_acoes = dados["acoes"]
+
+
 
 # ==============================================================================
 # 4. EXPORTAÇÃO DE CONSULTAS PARA JSON
@@ -216,6 +235,8 @@ def registrar_acao(acoes, usuarios):
                 "status": "Pendente"
             }
             acoes.append(nova_acao)
+            salvar_dados()
+
             print(
                 f"[SUCESSO]: Ação registrada com ID {novo_id} (Status: Pendente).")
     finally:
@@ -559,3 +580,5 @@ def menu_principal():
 
 if __name__ == "__main__":
     menu_principal()
+    carregar_dados()
+    salvar_dados()
