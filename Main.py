@@ -61,7 +61,11 @@ lista_acoes = [
         "id": 3,
         "id_usuario": 3,
         "categoria": "Reutilização de Água",
-        "descrição": "Reutiliza"
+        "descrição": "Reutilização de água para limpeza",
+        "local": "São Paulo - SP",
+        "data": "30/05/2027",
+        "pontos": 45,
+        "status": "Aprovada"
     }
 ]
 
