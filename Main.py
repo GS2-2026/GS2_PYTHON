@@ -45,6 +45,7 @@ lista_acoes = [
         "local": "Residência",
         "data": "23/05/2027",
         "pontos": 50,
+        "litros_economizados": 20,
         "status": "Aprovada"
     },
     {
@@ -55,8 +56,9 @@ lista_acoes = [
         "local": "São Paulo - SP",
         "data": "25/05/2027",
         "pontos": 70,
+        "litros_economizados": 20,
         "status": "Pendente"
-    }
+    },
     {
         "id": 3,
         "id_usuario": 3,
@@ -65,11 +67,14 @@ lista_acoes = [
         "local": "São Paulo - SP",
         "data": "30/05/2027",
         "pontos": 45,
+        "litros_economizados": 20,
         "status": "Aprovada"
     }
 ]
 
 # função para salvar dados
+
+
 def salvar_dados():
     dados = {
         "usuarios": lista_usuarios,
@@ -80,6 +85,8 @@ def salvar_dados():
         json.dump(dados, arquivo, ensure_ascii=False, indent=4)
 
 # função para carregar os dados
+
+
 def carregar_dados():
     global lista_usuarios, lista_acoes
 
@@ -90,11 +97,10 @@ def carregar_dados():
             lista_usuarios = dados["usuarios"]
             lista_acoes = dados["acoes"]
 
-
-
 # ==============================================================================
 # 4. EXPORTAÇÃO DE CONSULTAS PARA JSON
 # ==============================================================================
+
 
 def exportar_dados_para_json(dados, nome_arquivo="exportacao_ecorank.json"):
     """
@@ -204,6 +210,8 @@ def registrar_acao(acoes, usuarios):
         data = input("Informe a data (DD/MM/AAAA): ").strip()
 
         pontos = int(input("Informe os pontos da ação: "))
+        litros_economizados = float(
+            input("Informe os litros de água economizados: "))
 
     except ValueError:
         print("[ERRO]: Digite números válidos para o ID, categoria e pontos.")
@@ -236,6 +244,7 @@ def registrar_acao(acoes, usuarios):
                 "local": local,
                 "data": data,
                 "pontos": pontos,
+                "litros_economizados": litros_economizados,
                 "status": "Pendente"
             }
             acoes.append(nova_acao)
@@ -506,7 +515,7 @@ def submenu_ranking():
 def relatorio_impacto(acoes):
 
     print("\n" + "=" * 45)
-    print("       RELATORIO DE IMPACTO COMUNITARIO")
+    print("       RELATORIO DE IMPACTO HÍDRICO")
     print("\n" + "=" * 45)
 
     total_acoes = len(acoes)
@@ -516,13 +525,13 @@ def relatorio_impacto(acoes):
     rejeitadas = 0
     sinalizadas = 0
 
-    pontos_distribuidos = 0
+    pontos_distribuídos = 0
 
     for acao in acoes:
 
         if acao["status"] == "Aprovada":
             aprovadas = aprovadas + 1
-            pontos_distribuidos = pontos_distribuidos + acao["pontos"]
+            pontos_distribuidos = pontos_distribuídos + acao["pontos"]
 
         elif acao["status"] == "Pendente":
             pendentes = pendentes + 1
@@ -533,16 +542,13 @@ def relatorio_impacto(acoes):
         elif acao["status"] == "Rejeitada":
             rejeitadas = rejeitadas + 1
 
-        else:
-            sinalizadas = sinalizadas + 1
-
-    print(f"\nTotal de ações: {total_acoes}")
-    print(f"Ações aprovada: {aprovadas}")
+    print(f"\nAções registradas: {total_acoes}")
+    print(f"Ações aprovadas: {aprovadas}")
     print(f"Ações pendentes: {pendentes}")
     print(f"Ações rejeitadas: {rejeitadas}")
     print(f"Ações sinalizadas: {sinalizadas}")
 
-    print(f"\nTotal de pontos distribuidos: {pontos_distribuidos}")
+    print(f"\nTotal de pontos distribuidos: {pontos_distribuídos}")
 
     print("=" * 45)
 
@@ -552,12 +558,12 @@ def menu_principal():
     executando = True
     while executando:
         print("\n" + "=" * 55)
-        print("   ECORANK - GAMIFICAÇÃO SUSTENTÁVEL (SOULUP) - SPRINT 4")
+        print("   ECORANK - CITIZEN - ECONOMIA DE ÁGUA")
         print("=" * 55)
-        print("1 - Gestão de ações sustentáveis")
-        print("2 - Gestão de Cidadãos")
-        print("3 - Ranking e Progressão")
-        print("4 - Relatório de impacto comunitário")
+        print("1 - Gestão de usuários")
+        print("2 - Gestão de ações")
+        print("3 - Ranking de participantes")
+        print("4 - Relatório de impacto hídrico")
         print("0 - Sair do Sistema")
         print("=" * 55)
 
