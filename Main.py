@@ -63,7 +63,7 @@ lista_acoes = [
         "id": 3,
         "id_usuario": 3,
         "categoria": "Reutilização de Água",
-        "descricão": "Reutilização de água para limpeza",
+        "descricao": "Reutilização de água para limpeza",
         "local": "São Paulo - SP",
         "data": "30/05/2027",
         "pontos": 45,
@@ -99,7 +99,6 @@ def carregar_dados():
 
 
 # 4. exportação para json
-
 
 
 def exportar_dados_para_json(dados, nome_arquivo="exportacao_ecorank.json"):
@@ -160,7 +159,6 @@ def gerar_novo_id(lista_dados):
 
 
 # 6. funções de organização e filtragem
-
 
 
 def filtrar_acoes_por_status(acoes, status_escolhido):
@@ -268,7 +266,8 @@ def listar_acoes(acoes):
         print(f"Categoria: {acao['categoria']}")
         print(f"Descrição: {acao['descricao']}")
         print(f"Local: {acao['local']}")
-        print(f"Data: {acao['pontos']}")
+        print(f"Data: {acao['data']}")
+        print(f"Pontos: {acao['pontos']}")
         print(f"Água economizada: {acao.get('litros_economizados', 0)}litros")
         print("-" * 50)
 
@@ -354,7 +353,6 @@ def excluir_acao(acoes):
 # 8. gestão de usuarios.
 
 
-
 def cadastrar_usuario(usuarios):
     """Cadastra um novo usuário no sistema."""
     print("\n--- CADASTRAR NOVO USUÁRIO ---")
@@ -393,7 +391,6 @@ def listar_usuarios(usuarios):
 
 
 # 9. menus e submenus
-
 
 
 def submenu_acoes():
@@ -540,16 +537,16 @@ def relatorio_impacto(acoes):
         if acao["status"] == "Aprovada":
             aprovadas = aprovadas + 1
             pontos_distribuídos = pontos_distribuídos + acao["pontos"]
-            total_litros_economizados += acao["litros_economizados"]
+            total_litros_economizados += acao.get("litros_economizados", 0)
 
         elif acao["status"] == "Pendente":
             pendentes = pendentes + 1
 
-        elif acao["status"] == "Sinalizada":
-            sinalizadas = sinalizadas + 1
-
         elif acao["status"] == "Rejeitada":
             rejeitadas = rejeitadas + 1
+
+        elif acao["status"] == "Sinalizada":
+            sinalizadas = sinalizadas + 1
 
     print(f"\nAções registradas: {total_acoes}")
     print(f"Ações aprovadas: {aprovadas}")
@@ -558,7 +555,10 @@ def relatorio_impacto(acoes):
     print(f"Ações sinalizadas: {sinalizadas}")
 
     print(f"\nTotal de pontos distribuidos: {pontos_distribuídos}")
-    print(f"Total de água economizada: {total_litros_economizados:.2f} litros")
+    print(
+        f"Total de água economizada: "
+        f"{total_litros_economizados:.2f} litros"
+    )
 
     print("=" * 45)
 
@@ -582,10 +582,10 @@ def menu_principal():
         match opcao:
 
             case "1":
-                submenu_acoes()
+                submenu_usuarios()
 
             case "2":
-                submenu_usuarios()
+                submenu_acoes()
 
             case"3":
                 submenu_ranking()
@@ -601,4 +601,3 @@ def menu_principal():
 if __name__ == "__main__":
     menu_principal()
     carregar_dados()
-    salvar_dados()

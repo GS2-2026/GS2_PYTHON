@@ -1,0 +1,68 @@
+{
+    "usuarios": [
+        {
+            "id": 1,
+            "nome": "Ana Silva",
+            "pontos": 120,
+            "nivel": "Prata"
+        },
+        {
+            "id": 2,
+            "nome": "Carlos Souza",
+            "pontos": 350,
+            "nivel": "Ouro"
+        },
+        {
+            "id": 3,
+            "nome": "Beatriz Lima",
+            "pontos": 45,
+            "nivel": "Bronze"
+        }
+    ],
+    "acoes": [
+        {
+            "id": 1,
+            "id_usuario": 1,
+            "categoria": "Economia no Banho",
+            "descricao": "Redução do tempo de banho",
+            "local": "Residência",
+            "data": "23/05/2027",
+            "pontos": 50,
+            "litros_economizados": 20,
+            "status": "Aprovada"
+        },
+        {
+            "id": 2,
+            "id_usuario": 2,
+            "categoria": "Identificação de Vazamentos",
+            "descricao": "Identificação e comunicação de vazamento",
+            "local": "São Paulo - SP",
+            "data": "25/05/2027",
+            "pontos": 70,
+            "litros_economizados": 20,
+            "status": "Pendente"
+        },
+        {
+            "id": 3,
+            "id_usuario": 3,
+            "categoria": "Reutilização de Água",
+            "descricão": "Reutilização de água para limpeza",
+            "local": "São Paulo - SP",
+            "data": "30/05/2027",
+            "pontos": 45,
+            "litros_economizados": 20,
+            "status": "Aprovada"
+        },
+        {
+            "id": 4,
+            "id_usuario": 2,
+            "categoria": "Redução do Consumo de Água",
+            "descricao": "Reduzir o tempo no banho",
+            "local": "Chuveiro",
+            "data": "17/11/2026",
+            "pontos": 15,
+            "litros_economizados": 30.0,
+            "status": "Pendente"
+        }
+    ]
+}
