@@ -354,28 +354,50 @@ def atualizar_status_acao(acoes, usuarios):
 
 
 
+
 def excluir_acao(acoes):
-    """Remove uma ação da lista pelo seu ID (Delete)."""
+    """Remove uma ação e ajusta a pontuação se ela estiver aprovada."""
+
     print("\n--- EXCLUIR AÇÃO DE ECONOMIA DE ÁGUA ---")
+
     try:
         id_acao = int(input("Digite o ID da ação que deseja excluir: "))
+
     except ValueError:
         print("[ERRO]: O ID deve ser um número inteiro.")
+        return
+
+    acao = buscar_acao_por_id(id_acao, acoes)
+
+    if acao is None:
+        print(f"[AVISO]: Ação com ID {id_acao} não encontrada.")
+        return
+
+    confirma = input(
+        f"Confirma a exclusão da ação ID {id_acao}? (S/N): "
+    ).strip().upper()
+
+    if confirma == "S":
+
+        if acao["status"] == "Aprovada":
+            usuario = buscar_usuario_por_id(
+                acao["id_usuario"], lista_usuarios
+            )
+
+            if usuario is not None:
+                usuario["pontos"] -= acao["pontos"]
+                usuario["nivel"] = determinar_nivel(usuario["pontos"])
+
+        acoes.remove(acao)
+        salvar_dados()
+
+        print(f"[SUCESSO]: Ação ID {id_acao} excluída com sucesso.")
+
     else:
-        acao = buscar_acao_por_id(id_acao, acoes)
-        if acao is None:
-            print(f"[AVISO]: Ação com ID {id_acao} não encontrada.")
-        else:
-            confirma = input(
-                f"Confirma a exclusão da ação ID {id_acao}? (S/N): ").strip().upper()
-            if confirma == "S":
-                acoes.remove(acao)
-                salvar_dados()
-                print(f"[SUCESSO]: Ação ID {id_acao} excluída com sucesso.")
-            else:
-                print("[AVISO]: Exclusão cancelada.")
-    finally:
-        print("[FINALIZAÇÃO]: Processo de exclusão finalizado.")
+        print("[AVISO]: Exclusão cancelada.")
+
+    print("[FINALIZAÇÃO]: Processo de exclusão finalizado.")
+
 
 # 8. gestão de usuarios.
 
