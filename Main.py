@@ -72,7 +72,7 @@ lista_acoes = [
     }
 ]
 
-# função para salvar dados
+# 3. função para salvar dados
 
 
 def salvar_dados():
@@ -84,7 +84,7 @@ def salvar_dados():
     with open("dados_ecorank.json", "w", encoding="utf-8") as arquivo:
         json.dump(dados, arquivo, ensure_ascii=False, indent=4)
 
-# função para carregar os dados
+# 4. função para carregar os dados
 
 
 def carregar_dados():
@@ -98,7 +98,7 @@ def carregar_dados():
             lista_acoes = dados["acoes"]
 
 
-# 4. exportação para json
+# 5. exportação para json
 
 
 def exportar_dados_para_json(dados, nome_arquivo="exportacao_ecorank.json"):
@@ -115,7 +115,7 @@ def exportar_dados_para_json(dados, nome_arquivo="exportacao_ecorank.json"):
         print(f"[ERRO]: Falha ao exportar dados para JSON: {e}")
 
 
-# 5. funções auxiliares e regras de negocio
+# 6. funções auxiliares e regras de negocio
 
 
 def determinar_nivel(pontos):
@@ -158,7 +158,7 @@ def gerar_novo_id(lista_dados):
     return maior_id + 1
 
 
-# 6. funções de organização e filtragem
+# 7. funções de organização e filtragem
 
 
 def filtrar_acoes_por_status(acoes, status_escolhido):
@@ -182,7 +182,7 @@ def obter_ranking(usuarios):
     return ranking
 
 
-# 7. crud de ações
+# 8. crud de ações
 
 def registrar_acao(acoes, usuarios):
     """Cadastra uma nova ação de economia de água no EcoRank Citizen."""
@@ -268,7 +268,7 @@ def listar_acoes(acoes):
         print(f"Local: {acao['local']}")
         print(f"Data: {acao['data']}")
         print(f"Pontos: {acao['pontos']}")
-        print(f"Água economizada: {acao.get('litros_economizados', 0)}litros")
+        print(f"Água economizada: {acao.get('litros_economizados', 0)} litros")
         print("-" * 50)
 
     opcao_exp = input(
@@ -277,54 +277,81 @@ def listar_acoes(acoes):
         exportar_dados_para_json(acoes, "consultas_acoes.json")
 
 
+
 def atualizar_status_acao(acoes, usuarios):
-    """Atualiza o status de uma ação (Update) e bonifica o usuário se aprovada."""
-    print("\n--- ATUALIZAR STATUS DE AÇÃO (UPDATE) ---")
+    """Atualiza o status de uma ação e ajusta a pontuação do usuário."""
+
+    print("\n--- ATUALIZAR STATUS DE AÇÃO ---")
+
     try:
         id_acao = int(input("Digite o ID da ação que deseja alterar: "))
 
         acao = buscar_acao_por_id(id_acao, acoes)
+
         if acao is None:
             print(f"[AVISO]: Ação com ID {id_acao} não encontrada.")
             return
 
         print(f"\nAção ID {acao['id']} - Status Atual: {acao['status']}")
         print("Opções de novo status:")
+
         posicao = 1
         for st in STATUS_ACOES:
             print(f"{posicao} - {st}")
-            posicao = posicao + 1
+            posicao += 1
 
-        opcao_st = int(input("Escolha o novo status (1 a 4): "))
+        opcao_st = int(input("Escolha o novo status: "))
+
+        if opcao_st < 1 or opcao_st > len(STATUS_ACOES):
+            print("[AVISO]: Opção de status inválida.")
+            return
+
+        novo_status = STATUS_ACOES[opcao_st - 1]
+        status_antigo = acao["status"]
+
+        if novo_status == status_antigo:
+            print("[AVISO]: A ação já possui esse status.")
+            return
+
+        usuario = buscar_usuario_por_id(acao["id_usuario"], usuarios)
+
+        if usuario is None:
+            print("[ERRO]: Usuário relacionado à ação não encontrado.")
+            return
+
+        if novo_status == "Aprovada":
+            usuario["pontos"] += acao["pontos"]
+
+            print(f"-> Pontos creditados: +{acao['pontos']}")
+            print(
+                f"-> Água economizada: "
+                f"{acao.get('litros_economizados', 0)} litros."
+            )
+
+        elif status_antigo == "Aprovada":
+            usuario["pontos"] -= acao["pontos"]
+
+            print(f"-> Pontos descontados: -{acao['pontos']}")
+
+        acao["status"] = novo_status
+
+        usuario["nivel"] = determinar_nivel(usuario["pontos"])
+
+        print(f"-> Novo nível do usuário: {usuario['nivel']}")
+
+        salvar_dados()
+
+        print(
+            f"[SUCESSO]: Status da ação ID {id_acao} "
+            f"alterado para '{novo_status}'."
+        )
 
     except ValueError:
         print("[ERRO]: Você deve digitar um número válido.")
-    else:
-        if opcao_st < 1 or opcao_st > len(STATUS_ACOES):
-            print("[AVISO]: Opção de status fora do intervalo (1 a 4).")
-        else:
-            novo_status = STATUS_ACOES[opcao_st - 1]
-            status_antigo = acao["status"]
-            acao["status"] = novo_status
 
-            if novo_status == "Aprovada" and status_antigo != "Aprovada":
-                usuario = buscar_usuario_por_id(acao["id_usuario"], usuarios)
-                if usuario is not None:
-                    usuario["pontos"] = usuario["pontos"] + acao["pontos"]
-                    usuario["nivel"] = determinar_nivel(usuario["pontos"])
-                    print(
-                        f"-> Pontos creditados: +{acao['pontos']} para o usuário {usuario['nome']}.")
-                    print(
-                        f"-> Água economizada registrada: "
-                        f"{acao.get('litros_economizados', 0)} litros."
-                    )
-                    print(f"-> Novo nível do usuário: {usuario['nivel']}.")
-
-            salvar_dados()
-            print(
-                f"[SUCESSO]: Status da ação ID {id_acao} alterado para '{novo_status}'.")
     finally:
         print("[FINALIZAÇÃO]: Processo de alteração finalizado.")
+
 
 
 def excluir_acao(acoes):
@@ -369,6 +396,7 @@ def cadastrar_usuario(usuarios):
         "nivel": "Bronze"
     }
     usuarios.append(novo_usuario)
+    salvar_dados()
     print(
         f"[SUCESSO]: Usuário '{nome}' cadastrado com ID {novo_id} (Nível: Bronze).")
 
@@ -599,5 +627,6 @@ def menu_principal():
 
 
 if __name__ == "__main__":
-    menu_principal()
     carregar_dados()
+    menu_principal()
+    salvar_dados()
